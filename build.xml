@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="exp4server" default="compile" basedir=".">
+  <!-- env variables -->
+  <property environment="env" />
+  <property name="java.home" value="/Library/Java/JavaVirtualMachines/1.7.0_40.jdk/Contents/Home" />
+
+  <property name="app.dir" value="." />
+  <property name="src.dir" value="${app.dir}/src" />
+  <property name="bin.dir" value="${app.dir}/bin" />
+  <property name="lib.dir" value="${app.dir}/lib" />
+  <property name="zip.file" value="${env.USER}.zip" />
+
+  <!-- compilation -->
+  <target name="compile">
+    <mkdir dir="${bin.dir}" />
+    <javac srcdir="${src.dir}" destdir="${bin.dir}" debug="true" encoding="UTF-8" includeantruntime="false">
+      <classpath>
+        <pathelement location="${bin.dir}" />
+        <fileset dir="${lib.dir}">
+              <include name="*.jar" />
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- cleanup -->
+  <target name="clean">
+    <delete dir="${bin.dir}" />
+  </target>
+  <target name="dotclean">
+    <delete>
+      <fileset dir="." includes="**/._*" defaultexcludes="no" />
+    </delete>
+  </target>
+
+  <!-- packing -->
+  <target name="pack" depends="clean,dotclean">
+    <zip destfile="${zip.file}" basedir="${app.dir}" update="true">
+      <exclude name="${zip.file}" />
+    </zip>
+  </target>
+
+  <!-- execution -->
+  <target name="exec" depends="compile">
+    <java classname="exp4server.frozen.Main" classpath="${bin.dir}" />
+  </target>
+  <target name="exec-c" depends="compile">
+    <java classname="exp4server.frozen.Main">
+      <arg value="-c" />
+      <classpath>
+          <pathelement path="${bin.dir}" />
+          <fileset dir="${lib.dir}">
+              <include name="*.jar" />
+          </fileset>
+      </classpath>
+    </java>
+  </target>
+  <target name="exec-c-debug" depends="compile">
+	    <java classname="exp4server.frozen.Main" fork="on" failonerror="true">
+	      <jvmarg line="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8081 -Dfile.encoding=UTF-8" />
+	      <arg line="-c" />
+	      <classpath>
+            <pathelement path="${bin.dir}" />
+            <fileset dir="${lib.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+	    </java>
+	  </target>
+  <target name="exec-s" depends="compile">
+    <java classname="exp4server.frozen.Main">
+      <arg value="-s" />
+      <classpath>
+          <pathelement path="${bin.dir}" />
+          <fileset dir="${lib.dir}">
+              <include name="*.jar" />
+          </fileset>
+      </classpath>
+    </java>
+  </target>
+	<target name="exec-s-debug" depends="compile">
+	    <java classname="exp4server.frozen.Main" fork="on" failonerror="true">
+	      <jvmarg line="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8081 -Dfile.encoding=UTF-8" />
+	      <arg line="-s" />
+	      <classpath>
+          	<pathelement path="${bin.dir}" />
+         	<fileset dir="${lib.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+	    </java>
+	  </target>
+</project>
